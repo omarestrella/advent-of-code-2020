@@ -20,3 +20,26 @@ func getInput(day: Int) -> String {
   let data = try! Data(contentsOf: path)
   return String(data: data, encoding: .utf8)!
 }
+
+extension String {
+  func matches(pattern: String) -> [String] {
+    let regex = try! NSRegularExpression(pattern: pattern, options: [])
+    let matches = regex
+      .matches(in: self, options: [], range: NSRange(self.startIndex..., in: self))
+    return matches.flatMap { match in
+      return (0..<match.numberOfRanges).map {
+          let rangeBounds = match.range(at: $0)
+          guard let range = Range(rangeBounds, in: self) else {
+              return ""
+          }
+          return String(self[range])
+      }
+    }.rest()
+  }
+}
+
+extension Array {
+  func rest() -> [Element] {
+    return Array(self[1...])
+  }
+}
